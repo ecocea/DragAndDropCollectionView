@@ -12,6 +12,7 @@ import UIKit
     func representationImage(at point: CGPoint) -> UIView?
     func dataItem(at point: CGPoint) -> Any?
     func drag(dataItem item: Any)
+    @objc optional func willStartDragging()
     @objc optional func startDragging(at point: CGPoint)
     @objc optional func stopDragging()
 }

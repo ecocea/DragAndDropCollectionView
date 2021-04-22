@@ -42,9 +42,7 @@ public class DragAndDropManager: NSObject {
         
         switch recogniser.state {
         case .began:
-            UIView.animate(withDuration: 0.1, animations: {
-                bundle.representationImageView.transform = CGAffineTransform(scaleX: 1.1, y: 1.1)
-            })
+            sourceDraggable.willStartDragging?()
             canvas.addSubview(bundle.representationImageView)
             sourceDraggable.startDragging?(at: pointOnSourceDraggable)
             
@@ -85,7 +83,6 @@ public class DragAndDropManager: NSObject {
             guard let droppable = bundle.overDroppableView as? Droppable else {
                 UIView.animate(withDuration: 0.1, animations: {
                     bundle.representationImageView.transform = .identity
-                    bundle.representationImageView.alpha = 1
                 }, completion: { (_) in
                     bundle.representationImageView.removeFromSuperview()
                     sourceDraggable.stopDragging?()
@@ -101,7 +98,6 @@ public class DragAndDropManager: NSObject {
                 UIView.animate(withDuration: 0.1, animations: {
                     bundle.representationImageView.transform = .identity
                     bundle.representationImageView.frame.origin = rect.origin
-                    bundle.representationImageView.alpha = 1
                 }, completion: { (_) in
                     droppable.drop(dataItem: bundle.dataItem, at: rect)
                     bundle.representationImageView.removeFromSuperview()
@@ -112,7 +108,6 @@ public class DragAndDropManager: NSObject {
                 UIView.animate(withDuration: 0.1, animations: {
                     bundle.representationImageView.transform = .identity
                     bundle.representationImageView.frame.origin = rect.origin
-                    bundle.representationImageView.alpha = 1
                 }, completion: { (_) in
                     bundle.representationImageView.removeFromSuperview()
                     sourceDraggable.stopDragging?()
@@ -157,7 +152,6 @@ extension DragAndDropManager: UIGestureRecognizerDelegate {
                     continue
             }
             representation.frame = canvas.convert(representation.frame, from: view)
-            representation.alpha = 0.7
             let pointOnCanvas = touch.location(in: canvas)
             let offset = CGPoint(x: pointOnCanvas.x - representation.frame.origin.x,
                                  y: pointOnCanvas.y - representation.frame.origin.y)

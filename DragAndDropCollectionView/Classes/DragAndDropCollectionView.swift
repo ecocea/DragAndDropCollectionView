@@ -15,6 +15,8 @@ import UIKit
     func collectionView(_ collectionView: UICollectionView, moveDataItemFrom formIndexPath: IndexPath, to toIndexPath: IndexPath)
     func collectionView(_ collectionView: UICollectionView, insertDataItem dataItem : Any, atIndexPath indexPath: IndexPath)
     func collectionView(_ collectionView: UICollectionView, deleteDataItemAt indexPath: IndexPath)
+    func dragDropCollectionViewDraggingDidBegin()
+    func dragDropCollectionViewDraggingDidEnd()
     
 }
 
@@ -136,6 +138,7 @@ public class DragAndDropCollectionView: UICollectionView {
 extension DragAndDropCollectionView: Draggable {
     func canDrag(at point: CGPoint) -> Bool {
         if dataSource is DragAndDropCollectionViewDataSource {
+            willStartDragging()
             return indexPathForItem(at: point) != nil
         }
         return false
@@ -167,17 +170,27 @@ extension DragAndDropCollectionView: Draggable {
         return dragDropDS.collectionView(self, dataItemFor: indexPath)
     }
     
+    func willStartDragging() {
+        guard let dragDropDataSource = dataSource as? DragAndDropCollectionViewDataSource
+             else { return  }
+        dragDropDataSource.dragDropCollectionViewDraggingDidBegin()
+    }
+    
     func startDragging(at point: CGPoint) {
         draggingPathOfCellBeingDragged = indexPathForItem(at: point)
         reloadData()
     }
     
     func stopDragging() {
+        guard let dragDropDataSource = dataSource as? DragAndDropCollectionViewDataSource else {
+                return
+        }
         if let idx = draggingPathOfCellBeingDragged,
             let cell = cellForItem(at: idx) {
             cell.isHidden = false
         }
         draggingPathOfCellBeingDragged = nil
+        dragDropDataSource.dragDropCollectionViewDraggingDidEnd()
         reloadData()
     }
     
