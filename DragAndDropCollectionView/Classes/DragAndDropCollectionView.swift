@@ -138,7 +138,6 @@ public class DragAndDropCollectionView: UICollectionView {
 extension DragAndDropCollectionView: Draggable {
     func canDrag(at point: CGPoint) -> Bool {
         if dataSource is DragAndDropCollectionViewDataSource {
-            willStartDragging()
             return indexPathForItem(at: point) != nil
         }
         return false
@@ -149,6 +148,10 @@ extension DragAndDropCollectionView: Draggable {
         guard let indexPath = indexPathForItem(at: point),
             let cell = cellForItem(at: indexPath) else {
                 return nil
+        }
+        
+        if let cellRepresentable = cell as? DraggableRepresentable {
+            return cellRepresentable.imageRepresentable()
         }
         
         UIGraphicsBeginImageContextWithOptions(cell.bounds.size, cell.isOpaque, 0)

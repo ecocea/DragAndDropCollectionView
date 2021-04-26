@@ -22,13 +22,14 @@ public class DragAndDropManager: NSObject {
     private var longPressGestureRecogniser = UILongPressGestureRecognizer()
     private var bundle : Bundle?
     
-    public init(canvas : UIView, collectionViews : [UIView]) {
+    public init(canvas : UIView, collectionViews : [UIView], pressDuration: TimeInterval) {
         self.canvas = canvas
         self.views = collectionViews
         super.init()
         
         longPressGestureRecogniser.delegate = self
-        longPressGestureRecogniser.minimumPressDuration = 0.2
+        longPressGestureRecogniser.minimumPressDuration = pressDuration
+        
         longPressGestureRecogniser.addTarget(self, action: #selector(updateForLongPress(_:)))
         self.canvas.addGestureRecognizer(longPressGestureRecogniser)
     }
@@ -151,6 +152,7 @@ extension DragAndDropManager: UIGestureRecognizerDelegate {
                 let representation = draggable.representationImage(at: touchPointInView) else {
                     continue
             }
+            
             representation.frame = canvas.convert(representation.frame, from: view)
             let pointOnCanvas = touch.location(in: canvas)
             let offset = CGPoint(x: pointOnCanvas.x - representation.frame.origin.x,
